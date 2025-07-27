@@ -60,6 +60,12 @@ namespace TarodevController
 
         private void Update()
         {
+            if (Input.GetKeyUp(KeyCode.Alpha1))
+            {
+                _jumpParticles.Play();
+                Debug.Log("Play Particle Jump");
+            }
+
             if (_player == null) return;
 
             DetectGroundColor();
@@ -94,7 +100,6 @@ namespace TarodevController
             _anim.SetTrigger(JumpKey);
             _anim.ResetTrigger(GroundedKey);
 
-
             if (_grounded) // Avoid coyote
             {
                 SetColor(_jumpParticles);
@@ -113,7 +118,11 @@ namespace TarodevController
                 SetColor(_landParticles);
 
                 _anim.SetTrigger(GroundedKey);
-                _source.PlayOneShot(_footsteps[Random.Range(0, _footsteps.Length)]);
+                
+                // in case there is no sound
+                if(_footsteps.Length > 0)
+                    _source.PlayOneShot(_footsteps[Random.Range(0, _footsteps.Length)]);
+
                 _moveParticles.Play();
 
                 _landParticles.transform.localScale = Vector3.one * Mathf.InverseLerp(0, 40, impact);

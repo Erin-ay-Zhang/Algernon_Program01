@@ -12,7 +12,6 @@ namespace TarodevController
         private FrameInput _frameInput;
         private Vector2 _frameVelocity;
         private bool _cachedQueryStartInColliders;
-
         #region Interface
 
         public Vector2 FrameInput => _frameInput.Move;
@@ -186,6 +185,23 @@ namespace TarodevController
             if (_stats == null) Debug.LogWarning("Please assign a ScriptableStats asset to the Player Controller's Stats slot", this);
         }
 #endif
+        // 在玩家控制器脚本中添加
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (collision.gameObject.CompareTag("MovingPlatform"))
+            {
+                // 将玩家设为平台的子物体
+                transform.SetParent(collision.transform);
+            }
+        }
+
+        private void OnCollisionExit2D(Collision2D collision)
+        {
+            if (collision.gameObject.CompareTag("MovingPlatform"))
+            {
+                transform.SetParent(null);
+            }
+        }
     }
 
     public struct FrameInput
@@ -202,4 +218,6 @@ namespace TarodevController
         public event Action Jumped;
         public Vector2 FrameInput { get; }
     }
-}
+
+        
+    }

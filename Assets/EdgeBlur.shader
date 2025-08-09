@@ -1,92 +1,155 @@
-Shader "Custom/EdgeBlur"
+Shader "Hidden/EdgeBlurSeparable"
 {
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _BlurRadius ("Blur Radius", Range(0, 0.1)) = 0.05
-        _EdgeStart ("Edge Start", Range(0, 1)) = 0.7
-        _BlurIntensity ("Blur Intensity", Range(0, 5)) = 1.5
+        _BlurSize ("Blur Size", Range(0, 20)) = 6.0
+        _EdgeStart ("Edge Start", Range(0,1)) = 0.3
+        _EdgeEnd ("Edge End", Range(0,1)) = 0.8
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType"="Opaque" "Queue"="Overlay" }
         LOD 100
 
         Pass
         {
+            Name "H"
+            ZTest Always Cull Off ZWrite Off
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            // 添加目标平台指令，避免循环展开问题
-            #pragma target 3.0
-            #pragma exclude_renderers gles gles3
             #include "UnityCG.cginc"
 
-            // 定义固定的采样次数（编译时常量）
-            #define BLUR_SAMPLES 8
+            sampler2D _MainTex;
+            float4 _MainTex_TexelSize; 
+            float _BlurSize;
+            float _EdgeStart;
+            float _EdgeEnd;
 
-            struct appdata
-            {
+            // 9-tap gaussian weights (symmetric)
+            static const float w0 = 0.227027f;
+            static const float w1 = 0.1945946f;
+            static const float w2 = 0.1216216f;
+            static const float w3 = 0.054054f;
+            static const float w4 = 0.016216f;
+
+            struct appdata {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
             };
 
-            struct v2f
-            {
+            struct v2f {
                 float2 uv : TEXCOORD0;
-                float4 vertex : SV_POSITION;
+                float4 pos : SV_POSITION;
             };
-
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
-            float _BlurRadius;
-            float _EdgeStart;
-            float _BlurIntensity;
 
             v2f vert (appdata v)
             {
                 v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                o.pos = UnityObjectToClipPos(v.vertex);
+                o.uv = v.uv;
                 return o;
             }
 
             fixed4 frag (v2f i) : SV_Target
             {
-                // 计算到屏幕中心的距离
                 float2 center = float2(0.5, 0.5);
-                float dist = distance(i.uv, center);
-                
-                // 计算模糊强度（基于距离）
-                float blurFactor = saturate((dist - _EdgeStart) / (1 - _EdgeStart));
-                float actualBlur = blurFactor * _BlurRadius * _BlurIntensity;
-                
-                // 如果没有模糊，直接返回原像素
-                if (actualBlur <= 0) {
+                float dist = distance(i.uv, center) / 0.70710678;
+                dist = saturate(dist);
+
+                float bf = smoothstep(_EdgeStart, _EdgeEnd, dist) * _BlurSize;
+
+                if (bf < 0.001)
+                {
                     return tex2D(_MainTex, i.uv);
                 }
-                
-                // 进行模糊采样 - 使用固定采样次数
-                fixed4 col = tex2D(_MainTex, i.uv);
-                float2 dir = center - i.uv;
-                float distanceToCenter = length(dir);
-                dir = normalize(dir);
-                
-                // 使用固定次数的循环
-                for (int j = 1; j < BLUR_SAMPLES; j++)
+
+                float2 dx = float2(_MainTex_TexelSize.x, 0) * bf;
+
+                fixed4 col = tex2D(_MainTex, i.uv) * w0;
+                col += tex2D(_MainTex, i.uv + dx * 1.0) * w1;
+                col += tex2D(_MainTex, i.uv - dx * 1.0) * w1;
+                col += tex2D(_MainTex, i.uv + dx * 2.0) * w2;
+                col += tex2D(_MainTex, i.uv - dx * 2.0) * w2;
+                col += tex2D(_MainTex, i.uv + dx * 3.0) * w3;
+                col += tex2D(_MainTex, i.uv - dx * 3.0) * w3;
+                col += tex2D(_MainTex, i.uv + dx * 4.0) * w4;
+                col += tex2D(_MainTex, i.uv - dx * 4.0) * w4;
+
+                return col;
+            }
+            ENDCG
+        }
+
+        Pass
+        {
+            Name "V"
+            ZTest Always Cull Off ZWrite Off
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment fragv
+            #include "UnityCG.cginc"
+
+            sampler2D _MainTex;
+            float4 _MainTex_TexelSize;
+            float _BlurSize;
+            float _EdgeStart;
+            float _EdgeEnd;
+
+            static const float w0 = 0.227027f;
+            static const float w1 = 0.1945946f;
+            static const float w2 = 0.1216216f;
+            static const float w3 = 0.054054f;
+            static const float w4 = 0.016216f;
+
+            struct appdata {
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+            struct v2f {
+                float2 uv : TEXCOORD0;
+                float4 pos : SV_POSITION;
+            };
+
+            v2f vert (appdata v)
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(v.vertex);
+                o.uv = v.uv;
+                return o;
+            }
+
+            fixed4 fragv (v2f i) : SV_Target
+            {
+                float2 center = float2(0.5, 0.5);
+                float dist = distance(i.uv, center) / 0.70710678;
+                dist = saturate(dist);
+
+                float bf = smoothstep(_EdgeStart, _EdgeEnd, dist) * _BlurSize;
+
+                if (bf < 0.001)
                 {
-                    // 在径向方向上采样
-                    float t = j / (float)BLUR_SAMPLES;
-                    float offset = actualBlur * (t - 0.5);
-                    float2 sampleUV = i.uv + dir * offset;
-                    col += tex2D(_MainTex, sampleUV);
+                    return tex2D(_MainTex, i.uv);
                 }
-                
-                // 平均采样结果
-                return col / BLUR_SAMPLES;
+
+                float2 dy = float2(0, _MainTex_TexelSize.y) * bf;
+
+                fixed4 col = tex2D(_MainTex, i.uv) * w0;
+                col += tex2D(_MainTex, i.uv + dy * 1.0) * w1;
+                col += tex2D(_MainTex, i.uv - dy * 1.0) * w1;
+                col += tex2D(_MainTex, i.uv + dy * 2.0) * w2;
+                col += tex2D(_MainTex, i.uv - dy * 2.0) * w2;
+                col += tex2D(_MainTex, i.uv + dy * 3.0) * w3;
+                col += tex2D(_MainTex, i.uv - dy * 3.0) * w3;
+                col += tex2D(_MainTex, i.uv + dy * 4.0) * w4;
+                col += tex2D(_MainTex, i.uv - dy * 4.0) * w4;
+
+                return col;
             }
             ENDCG
         }
     }
-    FallBack "Diffuse"
+    FallBack Off
 }

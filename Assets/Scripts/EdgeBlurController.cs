@@ -3,45 +3,39 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class EdgeBlurController : MonoBehaviour
 {
-    [SerializeField] private Material blurMaterial;
+    public Shader edgeBlurShader;
+    private Material edgeBlurMaterial;
 
-    [Header("模糊设置")]
-    [Range(0, 0.1f)] public float blurRadius = 0.05f;
-    [Range(0, 1)] public float edgeStart = 0.7f;
-    [Range(0, 5)] public float blurIntensity = 1.5f;
-    [Range(4, 16)] public int blurSamples = 8;
+    [Range(0, 10)]
+    public float blurSize = 3f;
 
-    void OnValidate()
+    [Range(0, 1)]
+    public float edgeStart = 0.3f;
+
+    [Range(0, 1)]
+    public float edgeEnd = 0.7f;
+
+    private void Start()
     {
-        UpdateMaterialProperties();
-    }
-
-    void Update()
-    {
-#if UNITY_EDITOR
-        if (!Application.isPlaying)
+        if (edgeBlurShader == null)
         {
-            UpdateMaterialProperties();
+            Debug.LogError("请在 Inspector 里指定 EdgeBlur Shader");
+            enabled = false;
+            return;
         }
-#endif
+
+        edgeBlurMaterial = new Material(edgeBlurShader);
     }
 
-    private void UpdateMaterialProperties()
+    private void OnRenderImage(RenderTexture src, RenderTexture dest)
     {
-        if (blurMaterial != null)
+        if (edgeBlurMaterial != null)
         {
-            blurMaterial.SetFloat("_BlurRadius", blurRadius);
-            blurMaterial.SetFloat("_EdgeStart", edgeStart);
-            blurMaterial.SetFloat("_BlurIntensity", blurIntensity);
-            blurMaterial.SetInt("_BlurSamples", blurSamples);
-        }
-    }
+            edgeBlurMaterial.SetFloat("_BlurSize", blurSize);
+            edgeBlurMaterial.SetFloat("_EdgeStart", edgeStart);
+            edgeBlurMaterial.SetFloat("_EdgeEnd", edgeEnd);
 
-    void OnRenderImage(RenderTexture src, RenderTexture dest)
-    {
-        if (blurMaterial != null)
-        {
-            Graphics.Blit(src, dest, blurMaterial);
+            Graphics.Blit(src, dest, edgeBlurMaterial);
         }
         else
         {

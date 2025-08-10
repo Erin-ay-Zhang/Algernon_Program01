@@ -4,7 +4,7 @@ public class Collectible : MonoBehaviour
 {
     public int value = 1; // 每个物品的价值，比如1个金币
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
@@ -15,18 +15,7 @@ public class Collectible : MonoBehaviour
             Destroy(gameObject);
 
         }
-
-
-        Debug.Log("触发器触发，碰撞到：");
-        if (other.CompareTag("Player"))
-        {
-            Debug.Log("收集到了玩家");
-            Destroy(gameObject);
-        }
     }
-
-    
-   
 }
 
 

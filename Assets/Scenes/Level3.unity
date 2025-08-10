@@ -258,6 +258,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 52721388}
+  - component: {fileID: 52721389}
   m_Layer: 0
   m_Name: eyes (8)
   m_TagString: Untagged
@@ -283,6 +284,23 @@ Transform:
   - {fileID: 1568682041}
   m_Father: {fileID: 1868372916}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &52721389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 52721387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5f706843c181342ae2e6bf614ee03f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxRadius: 0.61
+  moveSpeed: 0.1
+  directionChangeInterval: 2
+  directionSmoothness: 0.5
+  playOnStart: 1
 --- !u!1 &57992534
 GameObject:
   m_ObjectHideFlags: 0
@@ -1670,13 +1688,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 203622251}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 182560b37a57458439a9f198ea682c62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  edgeBlurShader: {fileID: 4800000, guid: fd563d852214c6648a3f69a2cdb3fa0d, type: 3}
-  blurSize: 5.4
+  edgeBlurShader: {fileID: 0}
+  blurSize: 3
   edgeStart: 0.7
   edgeEnd: 0.7
 --- !u!1 &209877332
@@ -2782,6 +2800,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 310424343}
+  - component: {fileID: 310424344}
   m_Layer: 0
   m_Name: eyes (4)
   m_TagString: Untagged
@@ -2807,6 +2826,23 @@ Transform:
   - {fileID: 1911631729}
   m_Father: {fileID: 1868372916}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &310424344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 310424342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5f706843c181342ae2e6bf614ee03f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxRadius: 0.61
+  moveSpeed: 0.1
+  directionChangeInterval: 2
+  directionSmoothness: 0.5
+  playOnStart: 1
 --- !u!1 &313043883
 GameObject:
   m_ObjectHideFlags: 0
@@ -17786,6 +17822,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1008526845}
+  - component: {fileID: 1008526846}
   m_Layer: 0
   m_Name: eyes (7)
   m_TagString: Untagged
@@ -17811,6 +17848,23 @@ Transform:
   - {fileID: 638237832}
   m_Father: {fileID: 1868372916}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1008526846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1008526844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5f706843c181342ae2e6bf614ee03f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxRadius: 0.61
+  moveSpeed: 0.1
+  directionChangeInterval: 2
+  directionSmoothness: 0.5
+  playOnStart: 1
 --- !u!1 &1017443698
 GameObject:
   m_ObjectHideFlags: 0
@@ -23383,7 +23437,7 @@ GameObject:
   - component: {fileID: 1103703112}
   - component: {fileID: 1103703111}
   - component: {fileID: 1103703114}
-  - component: {fileID: 1103703113}
+  - component: {fileID: 1103703115}
   m_Layer: 0
   m_Name: Collectible
   m_TagString: Untagged
@@ -23459,19 +23513,6 @@ Transform:
   - {fileID: 1212577036}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1103703113
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1103703110}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 699b05d6c7aa15441a0f7db1dbee8b55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  value: 1
 --- !u!58 &1103703114
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -23507,6 +23548,19 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 59.055
+--- !u!114 &1103703115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1103703110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699b05d6c7aa15441a0f7db1dbee8b55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  value: 1
 --- !u!1 &1107257078
 GameObject:
   m_ObjectHideFlags: 0
@@ -25393,6 +25447,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1321482084}
+  - component: {fileID: 1321482085}
   m_Layer: 0
   m_Name: eyes (6)
   m_TagString: Untagged
@@ -25418,6 +25473,23 @@ Transform:
   - {fileID: 814924183}
   m_Father: {fileID: 1868372916}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1321482085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1321482083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5f706843c181342ae2e6bf614ee03f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxRadius: 0.61
+  moveSpeed: 0.1
+  directionChangeInterval: 2
+  directionSmoothness: 0.5
+  playOnStart: 1
 --- !u!1 &1331625435
 GameObject:
   m_ObjectHideFlags: 0
@@ -26021,6 +26093,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1391428937}
+  - component: {fileID: 1391428938}
   m_Layer: 0
   m_Name: eyes (9)
   m_TagString: Untagged
@@ -26046,6 +26119,23 @@ Transform:
   - {fileID: 1573034973}
   m_Father: {fileID: 1868372916}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1391428938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1391428936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5f706843c181342ae2e6bf614ee03f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxRadius: 0.61
+  moveSpeed: 0.1
+  directionChangeInterval: 2
+  directionSmoothness: 0.5
+  playOnStart: 1
 --- !u!1 &1406167189
 GameObject:
   m_ObjectHideFlags: 0
@@ -26139,6 +26229,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1410808210}
+  - component: {fileID: 1410808211}
   m_Layer: 0
   m_Name: eyes (2)
   m_TagString: Untagged
@@ -26164,6 +26255,23 @@ Transform:
   - {fileID: 1899136825}
   m_Father: {fileID: 1868372916}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1410808211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1410808209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5f706843c181342ae2e6bf614ee03f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxRadius: 0.61
+  moveSpeed: 0.1
+  directionChangeInterval: 2
+  directionSmoothness: 0.5
+  playOnStart: 1
 --- !u!1 &1416342857
 GameObject:
   m_ObjectHideFlags: 0
@@ -26339,6 +26447,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1424270841}
+  - component: {fileID: 1424270842}
   m_Layer: 0
   m_Name: eyes
   m_TagString: Untagged
@@ -26364,6 +26473,23 @@ Transform:
   - {fileID: 209877333}
   m_Father: {fileID: 1868372916}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1424270842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1424270840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5f706843c181342ae2e6bf614ee03f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxRadius: 0.61
+  moveSpeed: 0.1
+  directionChangeInterval: 2
+  directionSmoothness: 0.5
+  playOnStart: 1
 --- !u!1 &1429700880
 GameObject:
   m_ObjectHideFlags: 0
@@ -28147,6 +28273,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1659602402}
+  - component: {fileID: 1659602403}
   m_Layer: 0
   m_Name: eyes (10)
   m_TagString: Untagged
@@ -28172,6 +28299,23 @@ Transform:
   - {fileID: 1993481365}
   m_Father: {fileID: 1868372916}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1659602403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1659602401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5f706843c181342ae2e6bf614ee03f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxRadius: 0.61
+  moveSpeed: 0.1
+  directionChangeInterval: 2
+  directionSmoothness: 0.5
+  playOnStart: 1
 --- !u!1 &1664480983
 GameObject:
   m_ObjectHideFlags: 0
@@ -28987,6 +29131,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1770894156}
+  - component: {fileID: 1770894157}
   m_Layer: 0
   m_Name: eyes (1)
   m_TagString: Untagged
@@ -29012,6 +29157,23 @@ Transform:
   - {fileID: 1534786148}
   m_Father: {fileID: 1868372916}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1770894157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1770894155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5f706843c181342ae2e6bf614ee03f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxRadius: 0.61
+  moveSpeed: 0.1
+  directionChangeInterval: 2
+  directionSmoothness: 0.5
+  playOnStart: 1
 --- !u!1 &1781892974
 GameObject:
   m_ObjectHideFlags: 0
@@ -31474,6 +31636,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2027250051}
+  - component: {fileID: 2027250052}
   m_Layer: 0
   m_Name: eyes (5)
   m_TagString: Untagged
@@ -31499,6 +31662,23 @@ Transform:
   - {fileID: 451155643}
   m_Father: {fileID: 1868372916}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2027250052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2027250050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5f706843c181342ae2e6bf614ee03f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxRadius: 0.61
+  moveSpeed: 0.1
+  directionChangeInterval: 2
+  directionSmoothness: 0.5
+  playOnStart: 1
 --- !u!1 &2038021752
 GameObject:
   m_ObjectHideFlags: 0
@@ -31508,6 +31688,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2038021753}
+  - component: {fileID: 2038021754}
   m_Layer: 0
   m_Name: eyes (3)
   m_TagString: Untagged
@@ -31533,6 +31714,23 @@ Transform:
   - {fileID: 655189880}
   m_Father: {fileID: 1868372916}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2038021754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2038021752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5f706843c181342ae2e6bf614ee03f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxRadius: 0.61
+  moveSpeed: 0.1
+  directionChangeInterval: 2
+  directionSmoothness: 0.5
+  playOnStart: 1
 --- !u!1 &2050948986
 GameObject:
   m_ObjectHideFlags: 0

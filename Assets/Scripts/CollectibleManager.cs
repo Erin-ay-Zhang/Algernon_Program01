@@ -29,6 +29,7 @@ public class CollectibleManager : MonoBehaviour
     public void Collect(int value)
     {
         totalCollected += value;
+
         UpdateTextState();
 
         Debug.Log("已收集物品数：" + totalCollected);
@@ -37,6 +38,9 @@ public class CollectibleManager : MonoBehaviour
 
     private void UpdateTextState()
     {
+        if(totalCollected>= sprites.Length)
+            return;
+
         for (int i = 0; i < sprites.Length; ++i)
         {
             sprites[i].gameObject.SetActive(false);// .enabled = false;

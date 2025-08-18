@@ -1631,7 +1631,6 @@ GameObject:
   - component: {fileID: 203622256}
   - component: {fileID: 203622255}
   - component: {fileID: 203622254}
-  - component: {fileID: 203622253}
   - component: {fileID: 203622252}
   - component: {fileID: 203622257}
   - component: {fileID: 203622258}
@@ -1676,18 +1675,6 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &203622253
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 203622251}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15d089de3f99c3d47bb2f031fde2c7b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!81 &203622254
 AudioListener:
   m_ObjectHideFlags: 0
@@ -11597,6 +11584,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1950780219}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &789180173
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 789180174}
+  - component: {fileID: 789180175}
+  m_Layer: 0
+  m_Name: CollectibleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &789180174
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 789180173}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5.205281, y: -5.2309723, z: -0.0021151358}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &789180175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 789180173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: beb602a0b61ebff4c92f45468d163297, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  totalCollected: 0
 --- !u!4 &791341437 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3743203085436700882, guid: ab7ab7542e3a07443973211c06a805c5, type: 3}
@@ -21841,3 +21873,4 @@ SceneRoots:
   - {fileID: 2005863445}
   - {fileID: 1736550166}
   - {fileID: 1939330098}
+  - {fileID: 789180174}

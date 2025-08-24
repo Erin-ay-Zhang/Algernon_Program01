@@ -5,7 +5,7 @@ using UnityEngine;
 public class CombatZoneController : MonoBehaviour
 {
     [Header("攻击设置")]
-    public GameObject attackImagePrefab; // 攻击图片预制体
+    public GameObject[] attackImagePrefabs; // 攻击图片预制体
     public int attackCount = 5; // 攻击次数
     public float attackInterval = 1.5f; // 攻击间隔
     public float fallSpeed = 5f; // 下落速度
@@ -69,19 +69,22 @@ public class CombatZoneController : MonoBehaviour
 
         // 在战斗区域宽度内随机生成位置
         float randomX = Random.Range(
-            areaBounds.center.x - areaBounds.extents.x,
-            areaBounds.center.x + areaBounds.extents.x
+            areaBounds.center.x - areaBounds.extents.x / 2,
+            areaBounds.center.x + areaBounds.extents.x / 2
         );
 
         // 在战斗区域上方生成
         Vector3 spawnPosition = new Vector3(
             randomX,
-            areaBounds.max.y + spawnHeight,
+            areaBounds.max.y,
             0
         );
 
+        int randomValue = Random.Range(0, attackImagePrefabs.Length);
+        GameObject generateImage = attackImagePrefabs[randomValue];
+
         // 实例化攻击图片
-        GameObject attackImage = Instantiate(attackImagePrefab, spawnPosition, Quaternion.identity);
+        GameObject attackImage = Instantiate(generateImage, spawnPosition, Quaternion.identity);
         FallingAttack attackScript = attackImage.GetComponent<FallingAttack>();
 
         if (attackScript != null)

@@ -41,10 +41,10 @@ public class FallingAttack : MonoBehaviour
         }
 
         // 到达地面时销毁
-        if (other.CompareTag("Ground") && !hasHit)
-        {
-            hasHit = true;
-            Destroy(gameObject);
-        }
+        //if (other.CompareTag("Ground") && !hasHit)
+        //{
+        //    hasHit = true;
+        //    Destroy(gameObject);
+        //}
     }
 }

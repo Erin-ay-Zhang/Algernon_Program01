@@ -219,5 +219,6 @@ namespace TarodevController
         public Vector2 FrameInput { get; }
     }
 
-        
-    }
+
+
+}

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8cda6874b34a5f44ab38fd7aac83c370
+guid: a4e9100df6fa7764d87a7bb5e07f883f
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -136,13 +136,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\u7535\u7EBF\u6746_0"
+      name: "\u201CNOT  REALLY  EXIST\u201D_0"
       rect:
         serializedVersion: 2
-        x: 255
-        y: 0
-        width: 1420
-        height: 2601
+        x: 0
+        y: 185
+        width: 129
+        height: 54
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -150,20 +150,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b8e8c306b28df114a9739b28d96a1c3e
-      internalID: -1247088149
+      spriteID: 7c950a491a2e31442bbd0c17c0b977f6
+      internalID: 1850880332
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\u7535\u7EBF\u6746_1"
+      name: "\u201CNOT  REALLY  EXIST\u201D_1"
       rect:
         serializedVersion: 2
-        x: 2060
-        y: 315
-        width: 719
-        height: 1430
+        x: 0
+        y: 91
+        width: 233
+        height: 55
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -171,8 +171,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b0f47660058abf34d91e9e22d09974cd
-      internalID: 552680571
+      spriteID: 4769ded8a1acc7b4da11380c7a5dd8a3
+      internalID: -2082779928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u201CNOT  REALLY  EXIST\u201D_2"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 200
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f5e91443dafaf354197527d649d42cec
+      internalID: -2071476961
       vertices: []
       indices: 
       edges: []
@@ -188,8 +209,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      "\u7535\u7EBF\u6746_0": -1247088149
-      "\u7535\u7EBF\u6746_1": 552680571
+      "\u201CNOT  REALLY  EXIST\u201D_0": 1850880332
+      "\u201CNOT  REALLY  EXIST\u201D_1": -2082779928
+      "\u201CNOT  REALLY  EXIST\u201D_2": -2071476961
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

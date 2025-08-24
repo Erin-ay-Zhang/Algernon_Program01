@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - MovingPlatform
+  - AttackImage
+  - Ground
   layers:
   - Default
   - TransparentFX

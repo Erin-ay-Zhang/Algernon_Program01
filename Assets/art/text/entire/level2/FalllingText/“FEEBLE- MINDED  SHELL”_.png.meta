@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8cda6874b34a5f44ab38fd7aac83c370
+guid: bfd9f1dbff98ed74887d259c68b1ce76
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -136,13 +136,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\u7535\u7EBF\u6746_0"
+      name: "\u201CFEEBLE- MINDED  SHELL\u201D__0"
       rect:
         serializedVersion: 2
-        x: 255
-        y: 0
-        width: 1420
-        height: 2601
+        x: 0
+        y: 185
+        width: 261
+        height: 55
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -150,20 +150,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b8e8c306b28df114a9739b28d96a1c3e
-      internalID: -1247088149
+      spriteID: 534a15701a5f9af4e8c147cbf4b73480
+      internalID: 1569267977
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\u7535\u7EBF\u6746_1"
+      name: "\u201CFEEBLE- MINDED  SHELL\u201D__1"
       rect:
         serializedVersion: 2
-        x: 2060
-        y: 315
-        width: 719
-        height: 1430
+        x: 0
+        y: 93
+        width: 212
+        height: 54
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -171,8 +171,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b0f47660058abf34d91e9e22d09974cd
-      internalID: 552680571
+      spriteID: e555a22daba2035469266fb71b928873
+      internalID: 1126235555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u201CFEEBLE- MINDED  SHELL\u201D__2"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 212
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e3291a38df404e4ea8e02163fcf2940
+      internalID: 1183804646
       vertices: []
       indices: 
       edges: []
@@ -188,8 +209,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      "\u7535\u7EBF\u6746_0": -1247088149
-      "\u7535\u7EBF\u6746_1": 552680571
+      "\u201CFEEBLE- MINDED  SHELL\u201D__0": 1569267977
+      "\u201CFEEBLE- MINDED  SHELL\u201D__1": 1126235555
+      "\u201CFEEBLE- MINDED  SHELL\u201D__2": 1183804646
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

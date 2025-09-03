@@ -3299,7 +3299,7 @@ Transform:
   m_GameObject: {fileID: 203622251}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -11.099016, y: -6.173756, z: -10}
+  m_LocalPosition: {x: -11.093952, y: 8.239685, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -18912,6 +18912,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   textSystem: {fileID: 1736550165}
   totalCollected: 0
+  testSprite: {fileID: 0}
   thresholds: []
 --- !u!1 &791693821
 GameObject:
@@ -25357,7 +25358,7 @@ Transform:
   m_GameObject: {fileID: 1205563119}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.6909847, y: -0.18624401, z: 0}
+  m_LocalPosition: {x: -0.8960476, y: 0.00031471252, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -26682,11 +26683,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 385074236138563944, guid: 38b66506f6df8d447b2ec839a5e4913f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -17.79
+      value: -11.99
       objectReference: {fileID: 0}
     - target: {fileID: 385074236138563944, guid: 38b66506f6df8d447b2ec839a5e4913f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -6.36
+      value: 8.24
       objectReference: {fileID: 0}
     - target: {fileID: 385074236138563944, guid: 38b66506f6df8d447b2ec839a5e4913f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -28085,7 +28086,7 @@ GameObject:
   - component: {fileID: 1422069742}
   m_Layer: 0
   m_Name: WATCHING
-  m_TagString: Untagged
+  m_TagString: MovingPlatform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -30335,7 +30336,7 @@ GameObject:
   - component: {fileID: 1547472982}
   m_Layer: 0
   m_Name: LAUGHING
-  m_TagString: Untagged
+  m_TagString: MovingPlatform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -39617,7 +39618,7 @@ GameObject:
   - component: {fileID: 1810005430}
   m_Layer: 0
   m_Name: FELL
-  m_TagString: Untagged
+  m_TagString: MovingPlatform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -32,6 +32,7 @@ public class PlayerDeathHandler : MonoBehaviour
     public void SetRespawnPoint(Vector3 point)
     {
         _respawnPoint = point;
+        Debug.Log($"重生点已设置为: {point}");
     }
 
     // 死亡并重生
@@ -104,6 +105,8 @@ public class PlayerDeathHandler : MonoBehaviour
             playerSprite.enabled = true;
 
         _isDead = false;
+
+        Debug.Log($"玩家已在位置 {respawnPosition} 重生");
     }
 
     // 检查玩家是否死亡
@@ -125,5 +128,36 @@ public class PlayerDeathHandler : MonoBehaviour
                 zoneController.OnPlayerHit(gameObject);
             }
         }
+        // 新增：检查是否接触到死亡区域
+        else if (other.CompareTag("DeathZone") && !_isDead)
+        {
+            HandleDeathZoneContact(other);
+        }
+    }
+
+    // 新增：处理死亡区域接触
+    private void HandleDeathZoneContact(Collider2D deathZone)
+    {
+        // 尝试获取死亡区域上指定的复活点
+        DeathZoneRespawnPoint respawnPoint = deathZone.GetComponent<DeathZoneRespawnPoint>();
+
+        Vector3 respawnPosition = _respawnPoint; // 默认使用当前重生点
+
+        // 如果死亡区域指定了特定复活点，使用该点
+        if (respawnPoint != null && respawnPoint.respawnPoint != null)
+        {
+            respawnPosition = respawnPoint.respawnPoint.position;
+            Debug.Log($"使用死亡区域指定的复活点: {respawnPosition}");
+        }
+        else
+        {
+            Debug.Log("死亡区域未指定复活点，使用默认重生点");
+        }
+
+        // 触发死亡和重生
+        DieAndRespawn(respawnPosition);
     }
 }
+
+// 新增：死亡区域复活点组件
+// 将这个组件添加到死亡区域对象上，以指定特定的复活点

@@ -175,20 +175,28 @@ public class CollectibleManager : MonoBehaviour
         {
             if (threshold.valueRequired == thresholdValue && threshold.conditionMet && !threshold.hasBeenTriggered)
             {
+                AudioSource sourceA = null;
+                AudioSource sourceB = null;
                 foreach (GameObject obj in threshold.objectsToShow)
                 {
-                    if (obj != null) obj.SetActive(true);
+                    //if (obj != null) obj.SetActive(true);
                     // if it has audiosource yes play 
-                    if(obj.transform.TryGetComponent<AudioSource>(out AudioSource result))
+                    if(obj.transform.TryGetComponent<AudioSource>(out sourceA))
                     {
-                        result.PlayDelayed(0.3f);
+                        //result.PlayDelayed(0.3f);
                     }
                 }
 
                 foreach (GameObject obj in threshold.objectsToHide)
                 {
-                    if (obj != null) obj.SetActive(false);
+                    //if (obj != null) obj.SetActive(false);
+                    if (obj.transform.TryGetComponent<AudioSource>(out sourceB))
+                    {
+                        //result.PlayDelayed(0.3f);
+                    }
                 }
+
+                StartCoroutine(CrossFadeCoroutine(sourceB, sourceA));
 
                 threshold.hasBeenTriggered = true;
                 Debug.Log($"Threshold {threshold.valueRequired} effects triggered!");
@@ -232,5 +240,35 @@ public class CollectibleManager : MonoBehaviour
         currentTransitionCoroutine = StartCoroutine(TransitionTextSystem());
 
         CheckThresholdConditions();
+    }
+
+    private IEnumerator CrossFadeCoroutine(AudioSource audioSourceA, AudioSource audioSourceB)
+    {
+        // 确保B音频已赋值且未播放
+        if (audioSourceB.clip != null && !audioSourceB.isPlaying)
+        {
+            audioSourceB.Play();
+        }
+
+        float timer = 0f;
+        float startVolumeA = audioSourceA.volume;
+        float startVolumeB = audioSourceB.volume; // 通常是0
+
+        while (timer < 6.0f)
+        {
+            timer += Time.deltaTime;
+            float ratio = timer / 6.0f;
+
+            // 此消彼长
+            audioSourceA.volume = Mathf.Lerp(startVolumeA, 0f, ratio);
+            audioSourceB.volume = Mathf.Lerp(0f, startVolumeB, ratio); // 假设B初始音量为0
+
+            yield return null; // 等待下一帧
+        }
+
+        // 过渡结束后，确保音量设置准确并停止A音频
+        audioSourceA.volume = 0f;
+        audioSourceB.volume = startVolumeB;
+        audioSourceA.Stop();
     }
 }

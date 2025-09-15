@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 [System.Serializable]
@@ -7,8 +8,8 @@ public class CollectionThreshold
     public int valueRequired;
     public GameObject[] objectsToShow;
     public GameObject[] objectsToHide;
-    [HideInInspector] public bool conditionMet = false; // 条件已满足但尚未触发
-    [HideInInspector] public bool hasBeenTriggered = false; // 已经触发过
+    [HideInInspector] public bool conditionMet = false;
+    [HideInInspector] public bool hasBeenTriggered = false;
 }
 
 public class CollectibleManager : MonoBehaviour
@@ -19,8 +20,19 @@ public class CollectibleManager : MonoBehaviour
 
     public int totalCollected = 0;
 
-    // 新增：阈值配置列表
     public List<CollectionThreshold> thresholds = new List<CollectionThreshold>();
+
+    // 粒子系统引用
+    public ParticleSystem transitionParticles;
+
+    // 淡入淡出速度
+    public float fadeSpeed = 2f;
+
+    // 当前正在运行的协程
+    private Coroutine currentTransitionCoroutine;
+
+    // 当前活动的文本索引
+    private int currentActiveIndex = 0;
 
     private void Awake()
     {
@@ -39,6 +51,17 @@ public class CollectibleManager : MonoBehaviour
             {
                 var a = textSystem.transform.GetChild(i);
                 sprites[i] = a.GetComponent<SpriteRenderer>();
+                // 初始化所有文本为透明
+                sprites[i].color = new Color(1f, 1f, 1f, 0f);
+                sprites[i].gameObject.SetActive(false);
+            }
+
+            // 激活第一个文本
+            if (sprites.Length > 0)
+            {
+                sprites[0].gameObject.SetActive(true);
+                sprites[0].color = new Color(1f, 1f, 1f, 1f);
+                currentActiveIndex = 0;
             }
         }
 
@@ -50,68 +73,121 @@ public class CollectibleManager : MonoBehaviour
     {
         totalCollected += value;
 
-        UpdateTextState();
-        CheckThresholdConditions(); // 检查阈值条件是否满足
+        // 使用协程更新文本状态
+        if (currentTransitionCoroutine != null)
+        {
+            StopCoroutine(currentTransitionCoroutine);
+        }
+        currentTransitionCoroutine = StartCoroutine(TransitionTextSystem());
+
+        CheckThresholdConditions();
 
         Debug.Log("已收集物品数：" + totalCollected);
     }
 
-    private void UpdateTextState()
+    // 文本系统过渡协程 - 修改顺序
+    private IEnumerator TransitionTextSystem()
     {
         if (textSystem == null || totalCollected >= sprites.Length)
-            return;
+            yield break;
 
-        for (int i = 0; i < sprites.Length; ++i)
+        int newIndex = totalCollected;
+
+        // 开始淡出当前文本
+        if (currentActiveIndex >= 0 && currentActiveIndex < sprites.Length)
         {
-            sprites[i].gameObject.SetActive(false);
+            // 启动淡出协程
+            Coroutine fadeOutCoroutine = StartCoroutine(FadeSprite(sprites[currentActiveIndex], 1f, 0f));
+
+            // 等待淡出进行到一半
+            yield return new WaitForSeconds(0.3f); // 可以根据需要调整这个时间
+
+            // 播放粒子特效
+            if (transitionParticles != null)
+            {
+                // 确保粒子系统在正确的位置
+                transitionParticles.transform.position = textSystem.transform.position;
+                transitionParticles.Play();
+            }
+
+            // 激活新文本并开始淡入
+            sprites[newIndex].gameObject.SetActive(true);
+            StartCoroutine(FadeSprite(sprites[newIndex], 0f, 1f));
+
+            // 等待淡出完成
+            yield return fadeOutCoroutine;
+
+            // 禁用旧文本
+            sprites[currentActiveIndex].gameObject.SetActive(false);
+        }
+        else
+        {
+            // 如果没有当前活动文本，直接显示新文本
+            sprites[newIndex].gameObject.SetActive(true);
+            yield return StartCoroutine(FadeSprite(sprites[newIndex], 0f, 1f));
         }
 
-        sprites[totalCollected].gameObject.SetActive(true);
+        // 更新当前活动索引
+        currentActiveIndex = newIndex;
     }
 
-    // 修改：只检查条件是否满足，但不立即触发
+    // 淡入淡出协程
+    private IEnumerator FadeSprite(SpriteRenderer sprite, float startAlpha, float targetAlpha)
+    {
+        float elapsedTime = 0f;
+        float duration = 1f / fadeSpeed;
+
+        // 设置初始透明度
+        sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, startAlpha);
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = Mathf.Lerp(startAlpha, targetAlpha, elapsedTime / duration);
+            sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, alpha);
+            yield return null;
+        }
+
+        sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, targetAlpha);
+    }
+
+    // 检查条件是否满足
     private void CheckThresholdConditions()
     {
         foreach (CollectionThreshold threshold in thresholds)
         {
-            // 如果达到阈值且尚未满足条件
             if (totalCollected >= threshold.valueRequired && !threshold.conditionMet)
             {
                 threshold.conditionMet = true;
                 Debug.Log($"Threshold {threshold.valueRequired} condition met, waiting for trigger zone.");
             }
-            // 如果低于阈值但已经满足条件（用于重置情况）
             else if (totalCollected < threshold.valueRequired && threshold.conditionMet)
             {
                 threshold.conditionMet = false;
-                // 这里可以根据需要添加重置逻辑
             }
         }
     }
 
-    // 新增：在触发点调用此方法来实际触发阈值效果
+    // 触发阈值效果
     public void TriggerThresholdEffects(int thresholdValue)
     {
         foreach (CollectionThreshold threshold in thresholds)
         {
             if (threshold.valueRequired == thresholdValue && threshold.conditionMet && !threshold.hasBeenTriggered)
             {
-                // 显示需要显示的对象
                 foreach (GameObject obj in threshold.objectsToShow)
                 {
-                    if (obj != null)
+                    if (obj != null) obj.SetActive(true);
+                    // if it has audiosource yes play 
+                    if(obj.transform.TryGetComponent<AudioSource>(out AudioSource result))
                     {
-                        obj.SetActive(true);
+                        result.PlayDelayed(0.3f);
                     }
                 }
 
-                // 隐藏需要隐藏的对象
                 foreach (GameObject obj in threshold.objectsToHide)
                 {
-                    if (obj != null)
-                    {
-                        obj.SetActive(false);
-                    }
+                    if (obj != null) obj.SetActive(false);
                 }
 
                 threshold.hasBeenTriggered = true;
@@ -120,7 +196,7 @@ public class CollectibleManager : MonoBehaviour
         }
     }
 
-    // 新增：检查特定阈值是否满足条件
+    // 检查特定阈值是否满足条件
     public bool IsThresholdConditionMet(int thresholdValue)
     {
         foreach (CollectionThreshold threshold in thresholds)
@@ -133,7 +209,7 @@ public class CollectibleManager : MonoBehaviour
         return false;
     }
 
-    // 修改：重置所有阈值状态的方法
+    // 重置所有阈值状态
     public void ResetThresholds()
     {
         foreach (CollectionThreshold threshold in thresholds)
@@ -141,14 +217,20 @@ public class CollectibleManager : MonoBehaviour
             threshold.conditionMet = false;
             threshold.hasBeenTriggered = false;
         }
-        CheckThresholdConditions(); // 重新检查当前状态
+        CheckThresholdConditions();
     }
 
-    // 修改：直接设置收集值的方法
+    // 直接设置收集值
     public void SetCollectedValue(int value)
     {
         totalCollected = value;
-        UpdateTextState();
+
+        if (currentTransitionCoroutine != null)
+        {
+            StopCoroutine(currentTransitionCoroutine);
+        }
+        currentTransitionCoroutine = StartCoroutine(TransitionTextSystem());
+
         CheckThresholdConditions();
     }
 }

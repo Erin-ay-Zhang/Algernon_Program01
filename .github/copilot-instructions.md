@@ -2,7 +2,7 @@
 - Project name: Project1_Algernon2.0
 - Unity version: Unity 2022.3.43f1c1
 - Active game object:
-  - Name: CollectibleManager
-  - Tag: Untagged
-  - Layer: Default
+  - Name: player
+  - Tag: Player
+  - Layer: Player
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

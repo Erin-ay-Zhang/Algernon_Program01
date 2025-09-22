@@ -1,6 +1,6 @@
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 [System.Serializable]
 public class CollectionThreshold
@@ -8,6 +8,8 @@ public class CollectionThreshold
     public int valueRequired;
     public GameObject[] objectsToShow;
     public GameObject[] objectsToHide;
+    public AudioClip musicToPlay; // 新增：要播放的音乐
+    public bool stopCurrentMusic = true; // 新增：是否停止当前音乐
     [HideInInspector] public bool conditionMet = false;
     [HideInInspector] public bool hasBeenTriggered = false;
 }
@@ -19,20 +21,15 @@ public class CollectibleManager : MonoBehaviour
     public static CollectibleManager Instance;
 
     public int totalCollected = 0;
+    
+    // 新增：音频源引用
+    public AudioSource backgroundMusicSource;
+    public AudioSource soundEffectSource;
+    
+    // 当前播放的音乐
+    private AudioClip currentMusic;
 
     public List<CollectionThreshold> thresholds = new List<CollectionThreshold>();
-
-    // 粒子系统引用
-    public ParticleSystem transitionParticles;
-
-    // 淡入淡出速度
-    public float fadeSpeed = 2f;
-
-    // 当前正在运行的协程
-    private Coroutine currentTransitionCoroutine;
-
-    // 当前活动的文本索引
-    private int currentActiveIndex = 0;
 
     private void Awake()
     {
@@ -40,6 +37,20 @@ public class CollectibleManager : MonoBehaviour
             Instance = this;
         else
             Destroy(gameObject);
+            
+        // 确保有音频源组件
+        if (backgroundMusicSource == null)
+        {
+            backgroundMusicSource = gameObject.AddComponent<AudioSource>();
+            backgroundMusicSource.loop = true;
+            backgroundMusicSource.playOnAwake = false;
+        }
+        
+        if (soundEffectSource == null)
+        {
+            soundEffectSource = gameObject.AddComponent<AudioSource>();
+            soundEffectSource.playOnAwake = false;
+        }
     }
 
     private void Start()
@@ -51,21 +62,9 @@ public class CollectibleManager : MonoBehaviour
             {
                 var a = textSystem.transform.GetChild(i);
                 sprites[i] = a.GetComponent<SpriteRenderer>();
-                // 初始化所有文本为透明
-                sprites[i].color = new Color(1f, 1f, 1f, 0f);
-                sprites[i].gameObject.SetActive(false);
-            }
-
-            // 激活第一个文本
-            if (sprites.Length > 0)
-            {
-                sprites[0].gameObject.SetActive(true);
-                sprites[0].color = new Color(1f, 1f, 1f, 1f);
-                currentActiveIndex = 0;
             }
         }
 
-        // 初始化时检查一次阈值
         CheckThresholdConditions();
     }
 
@@ -73,85 +72,94 @@ public class CollectibleManager : MonoBehaviour
     {
         totalCollected += value;
 
-        // 使用协程更新文本状态
-        if (currentTransitionCoroutine != null)
-        {
-            StopCoroutine(currentTransitionCoroutine);
-        }
-        currentTransitionCoroutine = StartCoroutine(TransitionTextSystem());
-
+        
         CheckThresholdConditions();
 
         Debug.Log("已收集物品数：" + totalCollected);
     }
 
-    // 文本系统过渡协程 - 修改顺序
-    private IEnumerator TransitionTextSystem()
+    public class TextSystemController : MonoBehaviour
     {
-        if (textSystem == null || totalCollected >= sprites.Length)
-            yield break;
+        [SerializeField] private GameObject[] textSystems;
+        [SerializeField] private float transitionDuration = 1.0f;
 
-        int newIndex = totalCollected;
+        private int currentSystemIndex = -1;
+        private bool isTransitioning = false;
 
-        // 开始淡出当前文本
-        if (currentActiveIndex >= 0 && currentActiveIndex < sprites.Length)
+        private void UpdateTextState(int newSystemIndex)
         {
-            // 启动淡出协程
-            Coroutine fadeOutCoroutine = StartCoroutine(FadeSprite(sprites[currentActiveIndex], 1f, 0f));
+            if (isTransitioning || currentSystemIndex == newSystemIndex)
+                return;
 
-            // 等待淡出进行到一半
-            yield return new WaitForSeconds(0.3f); // 可以根据需要调整这个时间
+            StartCoroutine(TransitionTextSystems(newSystemIndex));
+        }
 
-            // 播放粒子特效
-            if (transitionParticles != null)
+        //文字切换
+        private IEnumerator TransitionTextSystems(int newSystemIndex)
+        {
+            isTransitioning = true;
+
+            // 获取当前和新的文本系统
+            GameObject currentSystem = currentSystemIndex >= 0 ? textSystems[currentSystemIndex] : null;
+            GameObject newSystem = textSystems[newSystemIndex];
+
+            // 激活新系统但设置其溶解值为1（完全溶解）
+            newSystem.SetActive(true);
+            SetDissolveAmount(newSystem, 1f);
+
+            // 同时进行两个动画：当前系统溶解消失，新系统溶解出现
+            float elapsedTime = 0f;
+
+            while (elapsedTime < transitionDuration)
             {
-                // 确保粒子系统在正确的位置
-                transitionParticles.transform.position = textSystem.transform.position;
-                transitionParticles.Play();
+                elapsedTime += Time.deltaTime;
+                float t = elapsedTime / transitionDuration;
+
+                if (currentSystem != null)
+                {
+                    SetDissolveAmount(currentSystem, t); // 从0到1溶解
+                }
+
+                SetDissolveAmount(newSystem, 1 - t); // 从1到0显示
+                yield return null;
             }
 
-            // 激活新文本并开始淡入
-            sprites[newIndex].gameObject.SetActive(true);
-            StartCoroutine(FadeSprite(sprites[newIndex], 0f, 1f));
+            // 确保最终值准确
+            if (currentSystem != null)
+            {
+                SetDissolveAmount(currentSystem, 1f);
+                currentSystem.SetActive(false);
+            }
 
-            // 等待淡出完成
-            yield return fadeOutCoroutine;
-
-            // 禁用旧文本
-            sprites[currentActiveIndex].gameObject.SetActive(false);
+            SetDissolveAmount(newSystem, 0f);
+            currentSystemIndex = newSystemIndex;
+            isTransitioning = false;
         }
-        else
+
+        private void SetDissolveAmount(GameObject textSystem, float amount)
         {
-            // 如果没有当前活动文本，直接显示新文本
-            sprites[newIndex].gameObject.SetActive(true);
-            yield return StartCoroutine(FadeSprite(sprites[newIndex], 0f, 1f));
+            // 获取所有子物体的SpriteRenderer
+            SpriteRenderer[] renderers = textSystem.GetComponentsInChildren<SpriteRenderer>();
+
+            foreach (SpriteRenderer renderer in renderers)
+            {
+                if (renderer.material.HasProperty("_DissolveAmount"))
+                {
+                    renderer.material.SetFloat("_DissolveAmount", amount);
+                }
+            }
         }
 
-        // 更新当前活动索引
-        currentActiveIndex = newIndex;
+        // 示例方法：如何调用切换
+        public void SwitchToSystem(int systemIndex)
+        {
+            if (systemIndex >= 0 && systemIndex < textSystems.Length)
+            {
+                UpdateTextState(systemIndex);
+            }
+        }
     }
 
-    // 淡入淡出协程
-    private IEnumerator FadeSprite(SpriteRenderer sprite, float startAlpha, float targetAlpha)
-    {
-        float elapsedTime = 0f;
-        float duration = 1f / fadeSpeed;
-
-        // 设置初始透明度
-        sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, startAlpha);
-
-        while (elapsedTime < duration)
-        {
-            elapsedTime += Time.deltaTime;
-            float alpha = Mathf.Lerp(startAlpha, targetAlpha, elapsedTime / duration);
-            sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, alpha);
-            yield return null;
-        }
-
-        sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, targetAlpha);
-    }
-
-    // 检查条件是否满足
     private void CheckThresholdConditions()
     {
         foreach (CollectionThreshold threshold in thresholds)
@@ -168,43 +176,105 @@ public class CollectibleManager : MonoBehaviour
         }
     }
 
-    // 触发阈值效果
     public void TriggerThresholdEffects(int thresholdValue)
     {
         foreach (CollectionThreshold threshold in thresholds)
         {
             if (threshold.valueRequired == thresholdValue && threshold.conditionMet && !threshold.hasBeenTriggered)
             {
-                AudioSource sourceA = null;
-                AudioSource sourceB = null;
                 foreach (GameObject obj in threshold.objectsToShow)
                 {
-                    //if (obj != null) obj.SetActive(true);
-                    // if it has audiosource yes play 
-                    if(obj.transform.TryGetComponent<AudioSource>(out sourceA))
-                    {
-                        //result.PlayDelayed(0.3f);
-                    }
+                    if (obj != null) obj.SetActive(true);
                 }
 
                 foreach (GameObject obj in threshold.objectsToHide)
                 {
-                    //if (obj != null) obj.SetActive(false);
-                    if (obj.transform.TryGetComponent<AudioSource>(out sourceB))
+                    if (obj != null) obj.SetActive(false);
+                }
+                
+                // 新增：处理音乐播放
+                if (threshold.musicToPlay != null)
+                {
+                    if (threshold.stopCurrentMusic)
                     {
-                        //result.PlayDelayed(0.3f);
+                        // 直接播放新音乐
+                        PlayMusic(threshold.musicToPlay);
+                    }
+                    else
+                    {
+                        // 淡入淡出过渡
+                        StartCoroutine(CrossFadeToNewMusic(threshold.musicToPlay));
                     }
                 }
-
-                StartCoroutine(CrossFadeCoroutine(sourceB, sourceA));
 
                 threshold.hasBeenTriggered = true;
                 Debug.Log($"Threshold {threshold.valueRequired} effects triggered!");
             }
         }
     }
+    
+    // 新增：直接播放音乐的方法
+    public void PlayMusic(AudioClip music)
+    {
+        if (music == null) return;
+        
+        if (backgroundMusicSource.isPlaying)
+        {
+            backgroundMusicSource.Stop();
+        }
+        
+        backgroundMusicSource.clip = music;
+        backgroundMusicSource.Play();
+        currentMusic = music;
+    }
+    
+    // 新增：淡入淡出过渡到新音乐
+    private IEnumerator CrossFadeToNewMusic(AudioClip newMusic)
+    {
+        if (newMusic == null) yield break;
+        
+        // 创建临时音频源用于过渡
+        AudioSource newAudioSource = gameObject.AddComponent<AudioSource>();
+        newAudioSource.clip = newMusic;
+        newAudioSource.volume = 0f;
+        newAudioSource.loop = true;
+        newAudioSource.Play();
+        
+        float duration = 3.0f; // 过渡时间
+        float timer = 0f;
+        
+        float originalVolume = backgroundMusicSource.volume;
+        
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            float ratio = timer / duration;
+            
+            // 降低旧音乐音量，提高新音乐音量
+            backgroundMusicSource.volume = Mathf.Lerp(originalVolume, 0f, ratio);
+            newAudioSource.volume = Mathf.Lerp(0f, originalVolume, ratio);
+            
+            yield return null;
+        }
+        
+        // 过渡完成后清理
+        backgroundMusicSource.Stop();
+        Destroy(backgroundMusicSource);
+        
+        // 将新音频源设置为主音频源
+        backgroundMusicSource = newAudioSource;
+        backgroundMusicSource.volume = originalVolume;
+        currentMusic = newMusic;
+    }
 
-    // 检查特定阈值是否满足条件
+    // 新增：播放音效
+    public void PlaySoundEffect(AudioClip sound)
+    {
+        if (sound == null || soundEffectSource == null) return;
+        
+        soundEffectSource.PlayOneShot(sound);
+    }
+
     public bool IsThresholdConditionMet(int thresholdValue)
     {
         foreach (CollectionThreshold threshold in thresholds)
@@ -217,7 +287,6 @@ public class CollectibleManager : MonoBehaviour
         return false;
     }
 
-    // 重置所有阈值状态
     public void ResetThresholds()
     {
         foreach (CollectionThreshold threshold in thresholds)
@@ -228,47 +297,54 @@ public class CollectibleManager : MonoBehaviour
         CheckThresholdConditions();
     }
 
-    // 直接设置收集值
     public void SetCollectedValue(int value)
     {
         totalCollected = value;
-
-        if (currentTransitionCoroutine != null)
-        {
-            StopCoroutine(currentTransitionCoroutine);
-        }
-        currentTransitionCoroutine = StartCoroutine(TransitionTextSystem());
-
         CheckThresholdConditions();
     }
 
-    private IEnumerator CrossFadeCoroutine(AudioSource audioSourceA, AudioSource audioSourceB)
+    // 修改后的交叉淡入淡出方法，现在可以被调用
+    public void CrossFadeMusic(AudioClip newMusic, float fadeDuration = 6.0f)
     {
-        // 确保B音频已赋值且未播放
-        if (audioSourceB.clip != null && !audioSourceB.isPlaying)
-        {
-            audioSourceB.Play();
-        }
+        if (newMusic == null || newMusic == currentMusic) return;
+        
+        StartCoroutine(CrossFadeCoroutine(backgroundMusicSource, newMusic, fadeDuration));
+    }
+    
+    private IEnumerator CrossFadeCoroutine(AudioSource currentSource, AudioClip newMusic, float fadeDuration)
+    {
+        // 创建新的音频源用于播放新音乐
+        AudioSource newSource = gameObject.AddComponent<AudioSource>();
+        newSource.clip = newMusic;
+        newSource.volume = 0f;
+        newSource.loop = true;
+        newSource.Play();
 
         float timer = 0f;
-        float startVolumeA = audioSourceA.volume;
-        float startVolumeB = audioSourceB.volume; // 通常是0
+        float currentVolume = currentSource.volume;
 
-        while (timer < 6.0f)
+        while (timer < fadeDuration)
         {
             timer += Time.deltaTime;
-            float ratio = timer / 6.0f;
+            float ratio = timer / fadeDuration;
 
-            // 此消彼长
-            audioSourceA.volume = Mathf.Lerp(startVolumeA, 0f, ratio);
-            audioSourceB.volume = Mathf.Lerp(0f, startVolumeB, ratio); // 假设B初始音量为0
+            // 降低当前音乐音量，提高新音乐音量
+            // 使用对数曲线而不是线性变化
+            float logRatio = Mathf.Log10(ratio * 9 + 1); // 将0-1映射到0-1但对数分布
 
-            yield return null; // 等待下一帧
+            currentSource.volume = Mathf.Lerp(currentVolume, 0.001f, logRatio);
+            newSource.volume = Mathf.Lerp(0.001f, currentVolume, logRatio);
+            
+            yield return null;
         }
 
-        // 过渡结束后，确保音量设置准确并停止A音频
-        audioSourceA.volume = 0f;
-        audioSourceB.volume = startVolumeB;
-        audioSourceA.Stop();
+        // 过渡完成后清理
+        currentSource.Stop();
+        Destroy(currentSource);
+        
+        // 将新音频源设置为主音频源
+        backgroundMusicSource = newSource;
+        backgroundMusicSource.volume = currentVolume;
+        currentMusic = newMusic;
     }
 }

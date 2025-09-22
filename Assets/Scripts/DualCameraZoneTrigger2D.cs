@@ -34,15 +34,17 @@ public class DualCameraZoneTrigger2D : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        //if (other.CompareTag("Player"))
         {
             // 检查进入了哪个区域
-            if (zone1Trigger != null && zone1Trigger.IsTouching(other) && fixedCam1 != null)
+            if (zone1Trigger != null && zone1Trigger.IsTouching(this.GetComponent<Collider2D>()) && fixedCam1 != null)
             {
+                Debug.Log("Area1");
                 SwitchToCamera(fixedCam1, zone1BlendTime);
             }
-            else if (zone2Trigger != null && zone2Trigger.IsTouching(other) && fixedCam2 != null)
+            else if (zone2Trigger != null && zone2Trigger.IsTouching(this.GetComponent<Collider2D>()) && fixedCam2 != null)
             {
+                Debug.Log("Area2");
                 SwitchToCamera(fixedCam2, zone2BlendTime);
             }
         }
@@ -50,11 +52,11 @@ public class DualCameraZoneTrigger2D : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        //if (other.CompareTag("Player"))
         {
             // 检查是否离开了所有区域
-            bool inZone1 = zone1Trigger != null && zone1Trigger.IsTouching(other);
-            bool inZone2 = zone2Trigger != null && zone2Trigger.IsTouching(other);
+            bool inZone1 = zone1Trigger != null && zone1Trigger.IsTouching(this.GetComponent<Collider2D>());
+            bool inZone2 = zone2Trigger != null && zone2Trigger.IsTouching(this.GetComponent<Collider2D>());
 
             if (!inZone1 && !inZone2 && followVCam != null)
             {

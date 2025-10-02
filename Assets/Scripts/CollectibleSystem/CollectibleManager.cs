@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 [System.Serializable]
 public class CollectionThreshold
@@ -138,12 +139,14 @@ public class CollectibleManager : MonoBehaviour
 
         private void SetDissolveAmount(GameObject textSystem, float amount)
         {
-            // 获取所有子物体的SpriteRenderer
-            SpriteRenderer[] renderers = textSystem.GetComponentsInChildren<SpriteRenderer>();
+            // 获取所有子物体的子物体（孙子物体及更深层级）的SpriteRenderer
+            var grandChildren = textSystem.GetComponentsInChildren<Transform>()
+                .Where(t => t != textSystem.transform && t.parent != textSystem.transform);
 
-            foreach (SpriteRenderer renderer in renderers)
+            foreach (Transform child in grandChildren)
             {
-                if (renderer.material.HasProperty("_DissolveAmount"))
+                SpriteRenderer renderer = child.GetComponent<SpriteRenderer>();
+                if (renderer != null && renderer.material.HasProperty("_DissolveAmount"))
                 {
                     renderer.material.SetFloat("_DissolveAmount", amount);
                 }

@@ -139,12 +139,12 @@ TextureImporter:
       name: IMG_0196_0
       rect:
         serializedVersion: 2
-        x: 267
-        y: 150
-        width: 320
-        height: 360
+        x: 278
+        y: 159
+        width: 368
+        height: 376
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

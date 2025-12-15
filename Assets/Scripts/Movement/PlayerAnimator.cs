@@ -85,7 +85,7 @@ namespace TarodevController
         private void HandleIdleSpeed()
         {
             var inputStrength = Mathf.Abs(_player.FrameInput.x);
-            _anim.SetFloat(IdleSpeedKey, Mathf.Lerp(1, _maxIdleSpeed, inputStrength));
+            _anim.SetFloat(IdleSpeedKey, Mathf.Lerp(0, _maxIdleSpeed, inputStrength));
             _moveParticles.transform.localScale = Vector3.MoveTowards(_moveParticles.transform.localScale, Vector3.one * inputStrength, 2 * Time.deltaTime);
         }
 
@@ -98,7 +98,7 @@ namespace TarodevController
         private void OnJumped()
         {
             _anim.SetTrigger(JumpKey);
-            _anim.ResetTrigger(GroundedKey);
+            _anim.SetBool(GroundedKey,false);
 
             if (_grounded) // Avoid coyote
             {
@@ -117,7 +117,7 @@ namespace TarodevController
                 DetectGroundColor();
                 SetColor(_landParticles);
 
-                _anim.SetTrigger(GroundedKey);
+                _anim.SetBool(GroundedKey,true);
                 
                 // in case there is no sound
                 if(_footsteps.Length > 0)
@@ -150,7 +150,7 @@ namespace TarodevController
             main.startColor = _currentGradient;
         }
 
-        private static readonly int GroundedKey = Animator.StringToHash("Grounded");
+        private static readonly int GroundedKey = Animator.StringToHash("IsGrounded");
         private static readonly int IdleSpeedKey = Animator.StringToHash("IdleSpeed");
         private static readonly int JumpKey = Animator.StringToHash("Jump");
     }
